@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ANIME CLICKER</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>ANIME CLICKER</h1>
+    <div id="tag">EARN COIN AND MASTER THE JUTSU!</div>
+    <div id="stats">
+      Chakra coins: <span id="coins">0</span> | 
+      Click Power: <span id="power">1</span> | 
+      Auto/sec: <span id="auto">0</span>
+    </div>
+  </header>
+  <main>
+    <div id="clicker">
+      <button id="clickBtn" class="big">Attack!</button>
+      <div class="info">
+        <div>Jutsu Level: <span id="glitchLevel">0</span></div>
+      </div>
+    </div>
+    <section>
+      <h2>Upgrades (Jutsu)</h2>
+      <div id="upgradeList" class="grid"></div>
+    </section>
+    <section>
+      <h2>Auras</h2>
+      <div id="auraList" class="grid"></div>
+    </section>
+
+    <section>
+      <h2>Game Options</h2>
+      <button id="saveBtn">💾 Save Game</button>
+      <button id="resetBtn">🔄 Reset Game</button>
+    </section>
+  </main>
+
+  <!-- toast -->
+  <div id="toast" class="toast"></div>
+
+  <footer>
+    &copy; ANIME CLICKER Game Demo
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
