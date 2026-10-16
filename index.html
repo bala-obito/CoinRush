@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>COIN RUSH </title>
+
+  <!-- ==================================================
+       STYLES
+       ================================================== -->
+  <style>
+    /* ---------- Theme variables ---------- */
+    :root {
+      --bg1: #0b0f1a;
+      --bg2: #0f1724;
+      --accent: #00d1ff;
+      --pink: #ff3e7f;
+      --card: rgba(255, 255, 255, 0.04);
+    }
+
+    /* ---------- Base ---------- */
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", sans-serif;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: #e6f0ff;
+      text-align: center;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px;
+    }
+
+    footer {
+      padding: 20px;
+      font-size: 14px;
+      opacity: 0.6;
+    }
+
+    /* ---------- Header ---------- */
+    header { padding: 20px; }
+
+    h1 {
+      margin: 0;
+      color: var(--pink);
+    }
+
+    #stats {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+
+    /* ---------- Buttons ---------- */
+    button {
+      background: linear-gradient(180deg, var(--pink), #ff6a9d);
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .big {
+      font-size: 22px;
+      padding: 18px 28px;
+    }
+
+    /* ---------- Panels ---------- */
+    #clicker {
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--card);
+    }
+
+    section {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--card);
+    }
+
+    /* ---------- Upgrade / aura grid ---------- */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .upgrade,
+    .aura {
+      padding: 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* ---------- Toast notification ---------- */
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-weight: 700;
+      display: none;
+    }
+
+    /* ---------- Anime power effects & interactive themes ---------- */
+    :root { --glow: #00d1ff; --glow2: #ff3e7f; }
+    body { transition: background 500ms ease, color 300ms ease; }
+    h1 { text-shadow: 0 0 18px color-mix(in srgb, var(--glow) 55%, transparent); }
+    button { transition: transform 160ms ease, filter 160ms ease, box-shadow 200ms ease; }
+    button:hover:not(:disabled) { transform: translateY(-2px) scale(1.025); filter: brightness(1.12); box-shadow: 0 0 18px color-mix(in srgb, var(--glow) 45%, transparent); }
+    button:active:not(:disabled) { transform: scale(.97); }
+    #clicker { border: 1px solid color-mix(in srgb, var(--glow) 45%, transparent); box-shadow: 0 0 26px color-mix(in srgb, var(--glow) 12%, transparent); transition: box-shadow .3s ease; }
+    .upgrade, .aura, .power-card { border: 1px solid rgba(255,255,255,.08); transition: border-color .25s, transform .25s, background .25s; }
+    .upgrade:hover, .aura:hover, .power-card:hover { transform: translateY(-3px); border-color: var(--glow); background: color-mix(in srgb, var(--glow) 9%, rgba(255,255,255,.04)); }
+    .power-card { padding: 14px; border-radius: 12px; background: rgba(255,255,255,.045); }
+    .power-card p { min-height: 38px; font-size: 14px; opacity: .82; }
+    #powerStatus { font-weight:700; color:var(--glow); min-height:24px; margin-top:8px; }
+    .power-active { animation: powerPulse .8s infinite alternate; }
+    .coin-pop { animation: coinPop .22s ease-out; }
+    @keyframes powerPulse { from { filter:drop-shadow(0 0 2px var(--glow)); } to { filter:drop-shadow(0 0 15px var(--glow)); } }
+    @keyframes coinPop { 50% { transform:scale(1.1); } }
+    /* NEON ARENA THEME */
+    :root { --bg1:#050510; --bg2:#0b1026; --glow:#00f5ff; --glow2:#ff2bd6; --card:rgba(10,18,42,.78); }
+    body { background: linear-gradient(135deg, #07051c 0%, #101a46 24%, #25104a 48%, #071f38 72%, #050510 100%); background-attachment: fixed; background-size: 220% 220%; animation: neonGradient 18s ease infinite; }
+    @keyframes neonGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    header { position:relative; overflow:hidden; border-bottom:1px solid color-mix(in srgb,var(--glow) 40%,transparent); background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--glow) 8%,transparent),color-mix(in srgb,var(--glow2) 8%,transparent),transparent); }
+    h1 { color:#f8fbff; letter-spacing:.12em; text-transform:uppercase; text-shadow:0 0 6px var(--glow),0 0 18px var(--glow),0 0 32px var(--glow2); }
+    section,#clicker { background:linear-gradient(145deg,rgba(13,22,52,.91),rgba(7,9,25,.92)); border:1px solid color-mix(in srgb,var(--glow) 28%,transparent); box-shadow:0 0 22px color-mix(in srgb,var(--glow) 7%,transparent),inset 0 0 18px rgba(255,255,255,.015); backdrop-filter:blur(12px); }
+    button { background:linear-gradient(135deg,var(--glow2),#7c3aed 55%,var(--glow)); color:#050510; text-shadow:none; box-shadow:0 0 12px color-mix(in srgb,var(--glow) 18%,transparent); }
+    button:disabled { filter:grayscale(.65); box-shadow:none; }
+    .upgrade,.aura,.power-card { background:linear-gradient(145deg,rgba(14,24,54,.9),rgba(7,10,27,.85)); border:1px solid color-mix(in srgb,var(--glow) 24%,transparent); box-shadow:inset 0 0 18px rgba(0,245,255,.025); }
+    .power-card { min-width:0; overflow-wrap:anywhere; }
+    .power-card .rank { color:var(--glow); font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+    .power-card .ability-name { display:block; margin:5px 0; color:#fff; text-shadow:0 0 9px color-mix(in srgb,var(--glow) 35%,transparent); }
+    .power-card p { min-height:48px; }
+    .power-tools { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:12px 0; }
+    .power-tools input { flex:1; min-width:180px; max-width:420px; padding:12px 14px; color:#fff; background:#080d20; border:1px solid color-mix(in srgb,var(--glow) 45%,transparent); border-radius:10px; outline:none; }
+    .power-tools input:focus { box-shadow:0 0 0 3px color-mix(in srgb,var(--glow) 20%,transparent); }
+    #powerPageInfo { color:var(--glow); font-weight:700; align-self:center; margin:12px 0; }
+    #powerList { grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); align-items:stretch; }
+    .power-card { display:flex; flex-direction:column; align-items:center; gap:7px; min-height:260px; }
+    .power-card button { margin-top:auto; }
+    html { scroll-behavior:smooth; }
+    section { scroll-margin-top:12px; }
+    @media (max-width:600px) { .big { width:100%; } main { padding:10px; } section { padding:10px; } .grid { grid-template-columns:repeat(auto-fit,minmax(145px,1fr)); } }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ==================================================
+       MARKUP
+       ================================================== -->
+  <header>
+    <h1> COIN RUSH</h1>
+    <div id="tag"> ANIME POWERS ·  SPECIAL ABILITIES · INFINITE PROGRESSION</div>
+    <div id="stats">
+      Chakra coins: <span id="coins">0</span> |
+      Click Power: <span id="power">1</span> |
+      Auto/sec: <span id="auto">0</span>
+    </div>
+  </header>
+
+  <main>
+    <div id="clicker">
+      <button id="clickBtn" class="big">Attack!</button>
+      <div class="info">
+        <div>Jutsu Level: <span id="glitchLevel">0</span></div>
+      </div>
+    </div>
+
+    <section>
+      <h2>Upgrades (Jutsu)</h2>
+      <div id="upgradeList" class="grid"></div>
+    </section>
+
+    <section>
+      <h2>Auras</h2>
+      <div id="auraList" class="grid"></div>
+    </section>
+
+
+    <section>
+      <h2>Anime Powers & Special Moves</h2>
+      <p>Charge your chakra coins, then unleash powerful moves. Each ability has its own cooldown.</p>
+      <div class="power-tools">
+        <input id="powerSearch" type="search" placeholder="Search 750 powers and abilities…" aria-label="Search anime powers" />
+        <select id="powerSort" aria-label="Sort powers" style="padding:10px;border-radius:10px;background:#080d20;color:#fff;border:1px solid var(--glow)">
+          <option value="rank">Sort: Rank</option><option value="cost">Sort: Cost</option><option value="name">Sort: Name</option><option value="owned">Sort: Owned first</option>
+        </select>
+      </div>
+      <div id="powerCount"></div>
+      <div id="powerList" class="grid"></div>
+      <div id="powerPageInfo">GET ALL THE ONE FROM HERE AND BE A CHAMPIANl.</div>
+      <div id="powerStatus" aria-live="polite">Discover, buy and activate all the abilities!</div>
+    </section>
+
+
+
+    <section>
+      <h2>Game Options</h2>
+      <button id="saveBtn">💾 Save Game</button>
+      <button id="resetBtn">🔄 Reset Game</button>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <footer>&copy;  COIN RUSH · CLICKER GAME · FUN GAME </footer>
+
+  <!-- ==================================================
+       GAME LOGIC
+       ================================================== -->
+  <script>
+    /* ---------------------------------------------
+       1. CONFIG & GAME DATA
+       --------------------------------------------- */
+    const SAVE_KEY = 'naruto_save';
+    const COST_GROWTH = 1.15;
+    const TOAST_MS = 1500;
+
+    // 20 Jutsu upgrades: "power" adds click power, "auto" adds coins/sec
+    const upgrades = [
+      { name: "Kunai Tap",            baseCost: 10,         power: 1,       level: 0 },
+      { name: "Shuriken Throw",       baseCost: 30,         power: 2,       level: 0 },
+      { name: "Shadow Clones",        baseCost: 50,         auto: 1,        level: 0 },
+      { name: "Fireball Jutsu",       baseCost: 120,        power: 3,       level: 0 },
+      { name: "Rasengan",             baseCost: 200,        power: 5,       level: 0 },
+      { name: "Chidori",              baseCost: 600,        power: 12,      level: 0 },
+      { name: "Summoning Jutsu",      baseCost: 1500,       auto: 5,        level: 0 },
+      { name: "Sage Mode",            baseCost: 3000,       power: 25,      level: 0 },
+      { name: "Wind: Rasen Shuriken", baseCost: 8000,       power: 100,     level: 0 },
+      { name: "Amaterasu",            baseCost: 20000,      power: 300,     level: 0 },
+      { name: "Susanoo",              baseCost: 60000,      power: 800,     level: 0 },
+      { name: "Flying Raijin",        baseCost: 150000,     auto: 50,       level: 0 },
+      { name: "Tailed Beast Bomb",    baseCost: 400000,     power: 2500,    level: 0 },
+      { name: "Rinnegan Powers",      baseCost: 1000000,    power: 7000,    level: 0 },
+      { name: "Infinite Tsukuyomi",   baseCost: 3000000,    auto: 500,      level: 0 },
+      { name: "Kotoamatsukami",       baseCost: 8000000,    power: 20000,   level: 0 },
+      { name: "Six Paths Sage Mode",  baseCost: 20000000,   power: 60000,   level: 0 },
+      { name: "Truth-Seeking Orbs",   baseCost: 50000000,   auto: 2000,     level: 0 },
+      { name: "Indra’s Arrow",        baseCost: 150000000,  power: 200000,  level: 0 },
+      { name: "Naruto’s Baryon Mode", baseCost: 500000000,  power: 1000000, level: 0 }
+    ];
+
+    // 5 Auras: one-time purchases that multiply all earnings
+    const auras = [
+      { name: "Akatsuki Aura",     cost: 5000,    multiplier: 2,  bought: false },
+      { name: "Bijuu Aura",        cost: 20000,   multiplier: 5,  bought: false },
+      { name: "Rinnegan Aura",     cost: 100000,  multiplier: 10, bought: false },
+      { name: "Eternal Mangekyou", cost: 1000000, multiplier: 25, bought: false },
+      { name: "Six Paths Aura",    cost: 5000000, multiplier: 50, bought: false }
+    ];
+
+    /* ---------------------------------------------
+       2. GAME STATE
+       --------------------------------------------- */
+    let coins = 0;
+    let clickPower = 1;
+    let autoPower = 0;
+    let multiplier = 1;
+    let glitchLevel = 0;
+    let temporaryClickMultiplier = 1;
+    let temporaryIncomeMultiplier = 1;
+    let temporaryAutoMultiplier = 1;
+    let activeTimers = [];
+    const powerCooldowns = {};
+    const ownedPowerIds = new Set();
+    // All 750 abilities render together in one long, scrollable page.
+    let powerPage = 0; // retained only for backwards-compatible search handlers
+    // 750 generated, distinct anime-inspired abilities. They are generated locally; no external assets are required.
+    const abilityCores = [
+      'Chakra Burst','Shadow Clone','Rasengan','Chidori','Fire Dragon','Water Dragon','Wind Blade','Earth Titan','Lightning Fang','Moon Slash',
+      'Solar Flare','Void Step','Spirit Bomb','Dragon Fist','Demon Seal','Phoenix Flame','Crystal Shield','Thunder God','Starfall','Meteor Impact',
+      'Sage Focus','Beast Roar','Phantom Strike','Astral Chains','Soul Reaper','Spirit Arrow','Gravity Well','Time Break','Dimension Rift','Cosmic Pulse',
+      'Ocean Wave','Blazing Comet','Frost Nova','Venom Lotus','Iron Will','Mirror Illusion','Raven Storm','Wolf Spirit','Serpent Coil','Titan Smash',
+      'Celestial Guard','Eclipse Cannon','Infinity Drive','Prism Burst','Arcane Storm','Dragon Aura','Spirit Bloom','Night Phantom','Heavenly Spear','Final Awakening'
+    ];
+    const abilityStyles = [
+      'Initiate','Charged','Awakened','Enhanced','Overdrive','Ascended','Evolved','Astral','Celestial','Divine',
+      'Eternal','Infinite','Transcendent','Absolute','Ultimate'
+    ];
+    const powers = Array.from({ length: 750 }, (_, index) => {
+      const core = abilityCores[index % abilityCores.length];
+      const style = abilityStyles[Math.floor(index / abilityCores.length) % abilityStyles.length];
+      const rank = index + 1;
+      const kind = index % 4;
+      const factor = 1.5 + rank * 0.025;
+      const cost = Math.max(0, Math.floor(25 * Math.pow(1.035, index)));
+      const effectType = ['click', 'auto', 'income', 'burst'][kind];
+      const duration = 8 + (index % 13);
+      const description = effectType === 'click' ? `${factor.toFixed(1)}× click power for ${duration}s.` :
+        effectType === 'auto' ? `${factor.toFixed(1)}× automatic coin generation for ${duration}s.` :
+        effectType === 'income' ? `${factor.toFixed(1)}× all earnings for ${duration}s.` :
+        `Instantly gain ${Math.max(5, rank * 5)}× your current click power.`;
+      return { id: `ability-${rank}`, rank, name: `${core} ${style}`, description, cost, cooldown: Math.min(90, 8 + Math.floor(rank / 15)), effectType, factor, duration, owned: false };
+    });
+
+    /* ---------------------------------------------
+       3. DOM REFERENCES
+       --------------------------------------------- */
+    const coinDisplay        = document.getElementById('coins');
+    const powerDisplay       = document.getElementById('power');
+    const autoDisplay        = document.getElementById('auto');
+    const glitchLevelDisplay = document.getElementById('glitchLevel');
+    const clickBtn           = document.getElementById('clickBtn');
+    const upgradeList        = document.getElementById('upgradeList');
+    const auraList           = document.getElementById('auraList');
+    const powerList          = document.getElementById('powerList');
+    const powerStatus        = document.getElementById('powerStatus');
+    const powerSearch        = document.getElementById('powerSearch');
+    const powerSort          = document.getElementById('powerSort');
+    const powerCount         = document.getElementById('powerCount');
+    const powerPageInfo      = document.getElementById('powerPageInfo');
+    const powerPrev          = document.getElementById('powerPrev');
+    const powerNext          = document.getElementById('powerNext');
+    const toastEl            = document.getElementById('toast');
+    const saveBtn            = document.getElementById('saveBtn');
+    const resetBtn           = document.getElementById('resetBtn');
+
+    /* ---------------------------------------------
+       4. AUDIO
+       --------------------------------------------- */
+    // User-provided Freesound click effect, with the standard Freesound preview URL as fallback.
+    const CLICK_SOUND_URL = 'https://cdn.freesound.org/previews/331/331912_3248244-lq.mp3';
+    const CLICK_SOUND_FALLBACK_URL = 'https://freesound.org/data/previews/331/331912_3248244-lq.mp3';
+    const clickSound = new Audio(CLICK_SOUND_URL);
+    clickSound.preload = 'auto';
+    clickSound.volume = 0.55;
+    let triedClickSoundFallback = false;
+
+    clickSound.addEventListener('error', () => {
+      if (!triedClickSoundFallback) {
+        triedClickSoundFallback = true;
+        clickSound.src = CLICK_SOUND_FALLBACK_URL;
+        clickSound.load();
+      }
+    });
+
+    function playClickSound() {
+      try {
+        // Restart the supplied effect on each click so Attack always gets the sound.
+        clickSound.pause();
+        clickSound.currentTime = 0;
+        const playback = clickSound.play();
+        if (playback && playback.catch) playback.catch(() => {
+          // Remote audio can be blocked by network settings; gameplay still works.
+        });
+      } catch (err) {
+        // Sound is optional; gameplay must still work.
+      }
+    }
+
+    // Play the supplied sound for each enabled button click.
+    document.addEventListener('click', e => {
+      const button = e.target.closest && e.target.closest('button');
+      if (button && !button.disabled) playClickSound();
+    });
+
+    /* ---------------------------------------------
+       5. HELPERS
+       --------------------------------------------- */
+    // Compact number progression. Requested custom sequence is preserved:
+    // K, L, C, B, T, Qa, Qc, Se, Sx, Sp, then larger suffixes.
+    function fmt(n) {
+      if (!Number.isFinite(n)) return '∞';
+      if (n < 1000) return Math.floor(n).toString();
+      const units = [
+        [1e3,'K'], [1e5,'L'], [1e7,'C'], [1e9,'B'], [1e12,'T'],
+        [1e15,'Qa'], [1e18,'Qc'], [1e21,'Se'], [1e24,'Sx'], [1e27,'Sp'],
+        [1e30,'Oc'], [1e33,'No'], [1e36,'Dc'], [1e39,'Ud'], [1e42,'Dd'],
+        [1e45,'Td'], [1e48,'Qad'], [1e51,'Qid'], [1e54,'Sxd'], [1e57,'Spd'],
+        [1e60,'Ocd'], [1e63,'Nod'], [1e66,'Vg'], [1e69,'Uvg'], [1e72,'Dvg'],
+        [1e75,'Tvg'], [1e78,'Qavg'], [1e81,'Qivg'], [1e84,'Sxvg'], [1e87,'Spvg'],
+        [1e90,'Ocvg'], [1e93,'Novg'], [1e96,'Tg'], [1e99,'Utg'], [1e102,'Dtg'],
+        [1e105,'Ttg'], [1e108,'Qatg'], [1e111,'Qitg'], [1e114,'Sxtg'], [1e117,'Sptg'],
+        [1e120,'Octg'], [1e123,'Notg'], [1e126,'Qag'], [1e129,'Qig'], [1e132,'Sxg'],
+        [1e135,'Spg'], [1e138,'Ocg'], [1e141,'Nog'], [1e144,'Ctg'], [1e147,'Uctg'],
+        [1e150,'Dctg'], [1e153,'Tctg'], [1e156,'Qactg'], [1e159,'Qictg'], [1e162,'Sxctg'],
+        [1e165,'Spctg'], [1e168,'Occtg'], [1e171,'Noctg'], [1e174,'Qagctg'], [1e177,'Qigctg'],
+        [1e180,'Sxgctg'], [1e183,'Spgctg'], [1e186,'Ocgctg'], [1e189,'Nogctg'], [1e192,'Mvg'],
+        [1e195,'Umvg'], [1e198,'Dmvg'], [1e201,'Tmvg'], [1e204,'Qamvg'], [1e207,'Qimvg'],
+        [1e210,'Sxmvg'], [1e213,'Spmvg'], [1e216,'Ocmvg'], [1e219,'Nomvg'], [1e222,'Mtg'],
+        [1e225,'Umtg'], [1e228,'Dmtg'], [1e231,'Tmtg'], [1e234,'Qamtg'], [1e237,'Qimtg'],
+        [1e240,'Sxmtg'], [1e243,'Spmtg'], [1e246,'Ocmtg'], [1e249,'Nomtg'], [1e252,'Mctg'],
+        [1e255,'Umctg'], [1e258,'Dmctg'], [1e261,'Tmctg'], [1e264,'Qamctg'], [1e267,'Qimctg'],
+        [1e270,'Sxmctg'], [1e273,'Spmctg'], [1e276,'Ocmctg'], [1e279,'Nomctg'], [1e282,'Mdtg'],
+        [1e285,'Umdtg'], [1e288,'Dmdtg'], [1e291,'Tmdtg'], [1e294,'Qamdtg'], [1e297,'Qimdtg'],
+        [1e300,'Sxmdtg'], [1e303,'Spmdtg']
+      ];
+      for (let i = units.length - 1; i >= 0; i--) {
+        if (n >= units[i][0]) return (n / units[i][0]).toFixed(2).replace(/\.?0+$/, '') + units[i][1];
+      }
+      return n.toExponential(2);
+    }
+
+    function upgradeCost(u) {
+      return Math.ceil(u.baseCost * Math.pow(COST_GROWTH, u.level));
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.style.display = 'block';
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => (toastEl.style.display = 'none'), TOAST_MS);
+    }
+
+    /* ---------------------------------------------
+       6. RENDERING
+       --------------------------------------------- */
+    function updateDisplay() {
+      coinDisplay.textContent        = fmt(coins);
+      powerDisplay.textContent       = fmt(clickPower * multiplier);
+      autoDisplay.textContent        = fmt(autoPower);
+      glitchLevelDisplay.textContent = glitchLevel;
+    }
+
+    function renderUpgrades() {
+      upgradeList.innerHTML = '';
+
+      upgrades.forEach(u => {
+        const cost = upgradeCost(u);
+
+        const card = document.createElement('div');
+        card.className = 'upgrade';
+
+        const title = document.createElement('div');
+        title.innerHTML = `<b>${u.name}</b>`;
+
+        const costEl = document.createElement('div');
+        costEl.textContent = `Cost: ${fmt(cost)}`;
+
+        const lvlEl = document.createElement('div');
+        lvlEl.textContent = `Level: ${u.level}`;
+
+        const btn = document.createElement('button');
+        btn.textContent = u.level > 0 ? `Upgrade (${fmt(cost)})` : `Buy (${fmt(cost)})`;
+        btn.disabled = coins < cost;
+        btn.onclick = () => buyUpgrade(u);
+
+        card.append(title, costEl, lvlEl, btn);
+        upgradeList.appendChild(card);
+      });
+    }
+
+    function renderAuras() {
+      auraList.innerHTML = '';
+
+      auras.forEach(a => {
+        const card = document.createElement('div');
+        card.className = 'aura';
+
+        const title = document.createElement('div');
+        title.innerHTML = `<b>${a.name}</b>`;
+
+        const costEl = document.createElement('div');
+        costEl.textContent = `Cost: ${fmt(a.cost)}`;
+
+        const btn = document.createElement('button');
+        btn.textContent = a.bought ? 'Bought' : `Buy (${fmt(a.cost)})`;
+        btn.disabled = a.bought || coins < a.cost;
+        btn.onclick = () => buyAura(a);
+
+        card.append(title, costEl, btn);
+        auraList.appendChild(card);
+      });
+    }
+
+    function timedEffect(type, factor, seconds, message) {
+      const setter = value => { if (type === 'click') temporaryClickMultiplier = value; else if (type === 'auto') temporaryAutoMultiplier = value; else temporaryIncomeMultiplier = value; };
+      setter(factor);
+      const timer = setTimeout(() => {
+        setter(1);
+        renderAll();
+        showToast('Power boost ended');
+      }, seconds * 1000);
+      activeTimers.push(timer);
+      powerStatus.textContent = message + ' (' + seconds + 's)';
+      renderAll();
+    }
+
+    function renderPowers() {
+      const query = (powerSearch?.value || '').trim().toLowerCase();
+      let filtered = powers.filter(p => !query || `${p.name} ${p.description} ${p.rank}`.toLowerCase().includes(query));
+      const sort = powerSort?.value || 'rank';
+      if (sort === 'cost') filtered.sort((a,b) => a.cost - b.cost);
+      else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+      else if (sort === 'owned') filtered.sort((a,b) => Number(ownedPowerIds.has(b.id)) - Number(ownedPowerIds.has(a.id)) || a.rank-b.rank);
+      else filtered.sort((a,b) => a.rank-b.rank);
+
+      // No pagination: render every matching ability in this same document.
+      powerList.innerHTML = '';
+      powerCount.textContent = `Showing all ${filtered.length} matching abilities · ${ownedPowerIds.size}/750 unlocked. Scroll down to explore the list.`;
+      powerPageInfo.textContent = query ? `Search results: ${filtered.length} abilities` : 'All 750 abilities are displayed on this page — keep scrolling to the end.';
+      filtered.forEach(power => {
+        const owned = ownedPowerIds.has(power.id);
+        const card = document.createElement('div');
+        card.className = 'power-card';
+        const rank = document.createElement('div'); rank.className = 'rank'; rank.textContent = `ABILITY #${String(power.rank).padStart(3,'0')}`;
+        const title = document.createElement('b'); title.className = 'ability-name'; title.textContent = power.name;
+        const description = document.createElement('p'); description.textContent = power.description;
+        const cost = document.createElement('div'); cost.textContent = `Unlock cost: ${fmt(power.cost)} coins`;
+        const cooldown = document.createElement('small');
+        const remaining = Math.max(0, (powerCooldowns[power.id] || 0) - Date.now());
+        cooldown.textContent = remaining > 0 ? `Cooldown: ${Math.ceil(remaining / 1000)}s` : `Cooldown: ${power.cooldown}s`;
+        const btn = document.createElement('button');
+        if (!owned) { btn.textContent = `🔓 Unlock · ${fmt(power.cost)}`; btn.disabled = coins < power.cost; }
+        else { btn.textContent = remaining > 0 ? `⏳ ${Math.ceil(remaining/1000)}s` : '⚡ Activate'; btn.disabled = remaining > 0; }
+        btn.onclick = () => {
+          if (!ownedPowerIds.has(power.id)) {
+            if (coins < power.cost) { showToast('Not enough coins to unlock this ability'); return; }
+            coins -= power.cost; ownedPowerIds.add(power.id); power.owned = true;
+            showToast(`Unlocked ${power.name}`); renderAll(); saveGame(); return;
+          }
+          if (Date.now() < (powerCooldowns[power.id] || 0)) return;
+          powerCooldowns[power.id] = Date.now() + power.cooldown * 1000;
+          if (power.effectType === 'burst') {
+            const gain = Math.max(5, clickPower * multiplier * power.rank * 5);
+            coins += gain; showToast(`${power.name}: +${fmt(gain)} coins!`);
+          } else {
+            timedEffect(power.effectType, power.factor, power.duration, `${power.name} activated: ${power.factor.toFixed(1)}× for ${power.duration}s`);
+          }
+          card.classList.add('power-active');
+          setTimeout(() => card.classList.remove('power-active'), 1200);
+          renderAll(); saveGame();
+        };
+        card.append(rank, title, description, cost, cooldown, btn);
+        powerList.appendChild(card);
+      });
+    }
+
+    function renderAll() {
+      updateDisplay();
+      renderUpgrades();
+      renderAuras();
+      renderPowers();
+    }
+
+    /* ---------------------------------------------
+       7. GAME ACTIONS
+       --------------------------------------------- */
+    function buyUpgrade(u) {
+      const cost = upgradeCost(u);
+      if (coins < cost) { showToast("Not enough coins"); return; }
+
+      coins -= cost;
+      u.level++;
+      if (u.power) clickPower += u.power;
+      if (u.auto)  autoPower  += u.auto;
+
+      renderAll();
+      showToast("Bought " + u.name);
+      saveGame();
+    }
+
+    function buyAura(a) {
+      if (a.bought || coins < a.cost) { showToast("Not enough coins"); return; }
+
+      coins -= a.cost;
+      multiplier *= a.multiplier;
+      a.bought = true;
+
+      renderAll();
+      showToast("Bought " + a.name);
+      saveGame();
+    }
+
+    function clickAttack() {
+      coins += clickPower * multiplier * temporaryClickMultiplier * temporaryIncomeMultiplier;
+      clickBtn.classList.remove("coin-pop");
+      void clickBtn.offsetWidth;
+      clickBtn.classList.add("coin-pop");
+      renderAll();
+    }
+
+    function autoTick() {
+      coins += autoPower * multiplier * temporaryAutoMultiplier * temporaryIncomeMultiplier;
+      renderAll();
+    }
+
+    /* ---------------------------------------------
+       8. SAVE / LOAD / RESET
+       --------------------------------------------- */
+    function saveGame() {
+      const data = {
+        coins, clickPower, autoPower, multiplier, glitchLevel,
+        upgrades: upgrades.map(u => u.level),
+        auras: auras.map(a => a.bought),
+        ownedPowerIds: Array.from(ownedPowerIds)
+      };
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+        showToast("Game Saved!");
+      } catch (e) {
+        showToast("Could not save");
+      }
+    }
+
+    function loadGame() {
+      let saved;
+      try { saved = localStorage.getItem(SAVE_KEY); } catch (e) { return; }
+      if (!saved) return;
+
+      try {
+        const data = JSON.parse(saved);
+        coins       = data.coins       || 0;
+        clickPower  = data.clickPower  || 1;
+        autoPower   = data.autoPower   || 0;
+        multiplier  = data.multiplier  || 1;
+        glitchLevel = data.glitchLevel || 0;
+
+        if (data.upgrades) data.upgrades.forEach((lvl, i) => { if (upgrades[i]) upgrades[i].level = lvl; });
+        if (data.auras)    data.auras.forEach((bought, i) => { if (auras[i]) auras[i].bought = bought; });
+        if (Array.isArray(data.ownedPowerIds)) data.ownedPowerIds.forEach(id => { if (powers.some(power => power.id === id)) ownedPowerIds.add(id); });
+
+        renderAll();
+        showToast("Game Loaded!");
+      } catch (e) {
+        /* corrupted save: ignore */
+      }
+    }
+
+    function resetGame() {
+      if (!confirm("Are you sure you want to RESET?")) return;
+
+      coins = 0; clickPower = 1; autoPower = 0; multiplier = 1; glitchLevel = 0;
+      upgrades.forEach(u => (u.level = 0));
+      auras.forEach(a => (a.bought = false));
+      ownedPowerIds.clear();
+      Object.keys(powerCooldowns).forEach(key => delete powerCooldowns[key]);
+
+      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+      renderAll();
+      showToast("Game Reset!");
+    }
+
+    /* ---------------------------------------------
+       9. EVENT WIRING & STARTUP
+       --------------------------------------------- */
+    clickBtn.onclick = clickAttack;
+    powerSearch.addEventListener('input', renderPowers);
+    powerSort.addEventListener('change', renderPowers);
+    saveBtn.onclick  = saveGame;
+    resetBtn.onclick = resetGame;
+
+    setInterval(autoTick, 1000); // auto income every second
+    setInterval(() => { if (powers.some(p => (powerCooldowns[p.id] || 0) > Date.now())) renderPowers(); }, 1000);
+
+    renderAll();
+    loadGame();
+  </script>
+</body>
+</html>
